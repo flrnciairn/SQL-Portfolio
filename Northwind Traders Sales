@@ -1,0 +1,73 @@
+-- Datasets: Northwind Traders Sales
+-- Source: [Microsoft](https://github.com/flrnciairn/SQL-Portfolio/blob/main/SQL%20Script%20for%20Northwind%20Traders)
+-- Queried Using: MySQL
+
+SELECT * FROM northwind.categories;
+SELECT * FROM northwind.customers;
+SELECT * FROM northwind.employees;
+SELECT * FROM northwind.orderdetails;
+SELECT * FROM northwind.orders;
+SELECT * FROM northwind.products;
+SELECT * FROM northwind.shippers;
+SELECT * FROM northwind.suppliers;
+
+-- How many orders were there in August 1996?
+SELECT DISTINCT COUNT(OrderID) AS total_order
+FROM northwind.orders
+WHERE MONTH(OrderDate) = 8
+	AND YEAR(OrderDate) = 1996;
+
+-- Who were the customers during that period?
+SELECT DISTINCT
+	customers.CustomerID,
+    customers.CustomerName
+FROM northwind.customers
+JOIN northwind.orders ON customers.CustomerID = orders.CustomerID
+WHERE MONTH(OrderDate) = 8
+	AND YEAR(OrderDate) = 1996;
+	
+-- Who is the customer that orders the most during that period?
+SELECT 
+    customers.CustomerID, 
+    customers.CustomerName, 
+    SUM(orderdetails.Quantity) AS total_order
+FROM northwind.customers
+JOIN northwind.orders ON customers.CustomerID = orders.CustomerID
+JOIN northwind.orderdetails ON orders.OrderID = orderdetails.OrderID
+WHERE MONTH(orders.OrderDate) = 8
+    AND YEAR(orders.OrderDate) = 1996
+GROUP BY customers.CustomerID, customers.CustomerName
+ORDER BY total_order DESC
+LIMIT 1;
+
+-- How many orders were made by the customer named 'QUICK-Stop' in September 1996?
+SELECT COUNT(orders.OrderID) AS OrderCount
+FROM northwind.customers
+JOIN northwind.orders ON customers.CustomerID = orders.CustomerID
+WHERE customers.CustomerName = 'QUICK-Stop'
+    AND MONTH(orders.OrderDate) = 9
+    AND YEAR(orders.OrderDate) = 1996;
+
+-- What is the total sales amount generated from purchases by the customer named 'QUICK-Stop' from August to September 1996?
+SELECT
+	SUM(orderdetails.Quantity*products.price) AS total_sales
+FROM northwind.customers
+JOIN northwind.orders ON customers.CustomerID = orders.CustomerID
+JOIN northwind.orderdetails ON orders.OrderID = orderdetails.OrderID
+JOIN northwind.products ON orderdetails.ProductID = products. productID
+WHERE customers.CustomerName = 'QUICK-stop'
+	AND orders.OrderDATE BETWEEN '1996-08-01' AND '1996-09-30';
+
+-- How is the trend of sales quantity in the fourth quarter of 1996?
+SELECT
+    MONTH(orders.OrderDate) AS 'month',
+    SUM(orderdetails.Quantity*products.price) AS total_sales
+FROM northwind.orders
+JOIN northwind.orderdetails ON orders.OrderID = orderdetails.OrderID
+JOIN northwind.products ON orderdetails.ProductID = products.ProductID
+WHERE orders.OrderDate BETWEEN '1996-10-01' AND '1996-12-31'
+GROUP BY
+    MONTH(orders.OrderDate), 
+    YEAR(orders.OrderDate)
+ORDER BY
+    'month';
