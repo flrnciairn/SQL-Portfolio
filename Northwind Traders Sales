@@ -1,5 +1,5 @@
 -- Datasets: Northwind Traders Sales
--- Source: [Microsoft](https://github.com/flrnciairn/SQL-Portfolio/blob/main/SQL%20Script%20for%20Northwind%20Traders)
+-- Source: Microsoft (https://github.com/flrnciairn/SQL-Portfolio/blob/main/SQL%20Script%20for%20Northwind%20Traders)
 -- Queried Using: MySQL
 
 SELECT * FROM northwind.categories;
