@@ -108,6 +108,38 @@ SELECT
 FROM northwind.orders
 JOIN northwind.orderdetails ON orders.OrderID = orderdetails.OrderID
 JOIN northwind.products ON orderdetails.ProductID = products.ProductID
+
+-- Create a query to retrieve the names of products with the category 'Condiments' using:
+
+SELECT * FROM products;
+SELECT * FROM categories;
+
+-- 1. JOIN clause
+SELECT
+	products.ProductID,
+    products.ProductName
+FROM northwind.products
+JOIN northwind.categories ON products.CategoryID = categories.CategoryID
+WHERE categories.CategoryName = 'Condiments';
+
+-- 2. Subsquery
+SELECT
+	p.ProductID,
+    p.ProductName
+FROM northwind.products AS p
+JOIN northwind.categories c ON p.CategoryID = c.CategoryID
+WHERE c.CategoryName = 'Condiments';
+
+-- 3. CTE
+WITH condiments AS (
+	SELECT
+		p.ProductID,
+        p.ProductName
+	FROM northwind.products AS p
+    JOIN northwind.categories c ON p.CategoryID = c.CategoryID
+    WHERE c.CategoryName = 'Condiments'
+)
+SELECT * FROM condiments;
 WHERE orders.OrderDate BETWEEN '1996-10-01' AND '1996-12-31'
 GROUP BY
     MONTH(orders.OrderDate), 
