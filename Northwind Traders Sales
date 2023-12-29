@@ -17,6 +17,49 @@ FROM northwind.orders
 WHERE MONTH(OrderDate) = 8
 	AND YEAR(OrderDate) = 1996;
 
+-- What is the time span (in days) covered by the available data? Does it span one year?
+SELECT DATEDIFF(MAX(OrderDate),MIN(OrderDate)) AS time_span_in_day
+FROM northwind.orders;
+
+-- How many transactions occurred in the fourth quarter of 1996?
+SELECT COUNT(*) AS total_transaction_Q4
+FROM northwind.orders
+WHERE MONTH(OrderDate) BETWEEN 10 AND 12
+	AND YEAR(OrderDate) = 1996;
+    
+-- What is the average sales per month in the year 1996?
+SELECT 
+	MONTH(orders.OrderDate) AS month_1996,
+    AVG(orderdetails.quantity*products.price) AS monthly_average_sales
+FROM northwind.orders
+JOIN northwind.orderdetails ON orders.OrderID = orderdetails.OrderID
+JOIN northwind.products ON orderdetails.ProductID = products.ProductID
+WHERE YEAR(orders.OrderDate) = 1996
+GROUP BY month_1996
+ORDER BY month_1996 ASC;
+
+-- Retrieve the full name of employees
+SELECT
+	FirstName,
+	LastName,
+    CONCAT_WS(' ', FirstName, LastName) AS full_name
+FROM northwind.employees;
+
+-- Retrieve the data of the oldest and youngest employee in Northwind
+SELECT
+    EmployeeID,
+    CONCAT_WS(' ', FirstName, LastName) AS oldest_employee,
+    CONCAT_WS(' ', MONTH(BirthDate), YEAR(BirthDate)) AS birth_date
+FROM northwind.employees
+WHERE BirthDate = (SELECT MIN(BirthDate) FROM northwind.employees);
+
+SELECT
+    EmployeeID,
+    CONCAT_WS(' ', FirstName, LastName) AS youngest_employee,
+    CONCAT_WS(' ', MONTH(BirthDate), YEAR(BirthDate)) AS birth_date
+FROM northwind.employees
+WHERE BirthDate = (SELECT MAX(BirthDate) FROM northwind.employees);
+
 -- Who were the customers during that period?
 SELECT DISTINCT
 	customers.CustomerID,
