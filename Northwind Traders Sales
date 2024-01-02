@@ -140,9 +140,58 @@ WITH condiments AS (
     WHERE c.CategoryName = 'Condiments'
 )
 SELECT * FROM condiments;
+
+
 WHERE orders.OrderDate BETWEEN '1996-10-01' AND '1996-12-31'
 GROUP BY
     MONTH(orders.OrderDate), 
     YEAR(orders.OrderDate)
 ORDER BY
     'month';
+
+SELECT * FROM customers;
+
+SELECT * FROM suppliers;
+
+-- 1.Retrieve name of city from customers and suppliers using:
+-- a. UNION ALL
+SELECT customers.city
+FROM northwind.customers
+UNION ALL
+SELECT suppliers.city
+FROM northwind.suppliers;
+
+-- b. UNION DISTINCT
+SELECT customers.city
+FROM northwind.customers
+UNION DISTINCT
+SELECT suppliers.city
+FROM northwind.suppliers;
+
+SELECT * FROM orders;
+SELECT * FROM customers;
+
+-- 2. Categorized customers according to total transaction. If more than once: "1", if less: '0'
+SELECT CustomerName, COUNT(*) AS transaction_count,
+		CASE WHEN COUNT(*) > 1 THEN 1
+        ELSE 0
+        END is_returning
+ FROM customers c
+ JOIN orders o ON c.CustomerID = o.CustomerID
+ GROUP BY CustomerName;
+
+-- 3. How many customers make repeat transactions?
+WITH returning_customer AS (
+	SELECT
+		c.CustomerName,
+        COUNT(*) AS transaction_count,
+			CASE WHEN COUNT(*) > 1 THEN 1
+            ELSE 0
+            END AS is_returning
+	FROM northwind.customers c
+    JOIN northwind.orders o ON c.CustomerID = o.CustomerID
+    GROUP BY c.CustomerName)
+    
+SELECT COUNT(*) AS transaction_count
+FROM returning_customer
+WHERE is_returning = 1;
